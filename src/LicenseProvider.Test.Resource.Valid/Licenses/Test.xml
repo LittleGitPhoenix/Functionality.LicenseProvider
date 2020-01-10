@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<information
+	assemblyName="LicenseProvider.Test.Resource.Valid"
+	matchMode="StartsWith"
+>
+	<license version="1.0.0" fileName="v1.0.0.txt">
+Some license text...
+	</license>
+	<license version="2.0.0" fileName="v2.0.0.txt">
+Some renewed license text...
+With an additional line.
+	</license>
+</information>
