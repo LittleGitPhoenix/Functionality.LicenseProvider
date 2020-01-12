@@ -141,7 +141,6 @@ namespace Phoenix.Functionality.LicenseProvider
 			return true;
 		}
 
-
 		/// <summary>
 		/// Tries to get the matching <see cref="LicenseProvider"/> for the passed <paramref name="assemblyInformation"/>.
 		/// </summary>
@@ -149,8 +148,19 @@ namespace Phoenix.Functionality.LicenseProvider
 		/// <param name="licenseProvider"> The <see cref="LicenseProvider"/> that will be filled. </param>
 		/// <returns> <c>True</c> on success, otherwise <c>False</c>. </returns>
 		private bool TryGetLicenseProvider(AssemblyName assemblyInformation, out LicenseProvider licenseProvider)
+			=> LicenseResolver.TryGetLicenseProvider(assemblyInformation.Name, assemblyInformation.Version, this.LicenseConfigurations, out licenseProvider);
+
+		/// <summary>
+		/// Tries to get the matching <see cref="LicenseProvider"/> from <paramref name="licenseConfigurations"/> for an assembly.
+		/// </summary>
+		/// <param name="assemblyName"> The name of the assembly to match. </param>
+		/// <param name="assemblyVersion"> The <see cref="Version"/> of the assembly to match. </param>
+		/// <param name="licenseConfigurations"> A collection of <see cref="LicenseConfiguration"/>s used for matching. </param>
+		/// <param name="licenseProvider"> The <see cref="LicenseProvider"/> that will be filled. </param>
+		/// <returns> <c>True</c> on success, otherwise <c>False</c>. </returns>
+		internal static bool TryGetLicenseProvider(string assemblyName, Version assemblyVersion, ICollection<LicenseConfiguration> licenseConfigurations, out LicenseProvider licenseProvider)
 		{
-			licenseProvider = this.LicenseConfigurations
+			licenseProvider = licenseConfigurations
 				.FirstOrDefault
 				(
 					configuration =>
@@ -158,20 +168,20 @@ namespace Phoenix.Functionality.LicenseProvider
 						switch (configuration.NameMatchMode)
 						{
 							case AssemblyNameMatchMode.Contains:
-								return assemblyInformation.Name.Contains(configuration.AssemblyName);
+								return assemblyName.Contains(configuration.AssemblyName);
 							case AssemblyNameMatchMode.StartsWith:
-								return assemblyInformation.Name.StartsWith(configuration.AssemblyName);
+								return assemblyName.StartsWith(configuration.AssemblyName);
 							case AssemblyNameMatchMode.EndsWith:
-								return assemblyInformation.Name.EndsWith(configuration.AssemblyName);
+								return assemblyName.EndsWith(configuration.AssemblyName);
 							case AssemblyNameMatchMode.Exact:
 							default:
-								return String.Equals(configuration.AssemblyName, assemblyInformation.Name, StringComparison.OrdinalIgnoreCase);
+								return String.Equals(configuration.AssemblyName, assemblyName, StringComparison.OrdinalIgnoreCase);
 						}
 					}
 				)
 				?.LicenseProviders
 				.OrderByDescending(provider => provider.Version)
-				.FirstOrDefault(provider => provider.Version >= assemblyInformation.Version)
+				.FirstOrDefault(provider => assemblyVersion >= provider.Version)
 				;
 
 			return licenseProvider != null;
