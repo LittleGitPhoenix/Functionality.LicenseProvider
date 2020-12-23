@@ -5,10 +5,10 @@
 
 using System;
 
-namespace Phoenix.Functionality.LicenseProvider.ResourceAssembly.Default
+namespace Phoenix.Functionality.LicenseProvider.ResourceAssembly.LittlePhoenix
 {
 	/// <summary>
-	/// Just a class used as reference to obtain this <see cref="System.Reflection.Assembly"/>.
+	/// Just a class used to obtain a reference to its assembly.
 	/// </summary>
-	public class PhoenixLicenses { }
+	public sealed class Anchor { }
 }

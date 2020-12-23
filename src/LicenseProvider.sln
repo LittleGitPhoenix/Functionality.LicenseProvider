@@ -5,13 +5,19 @@ VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LicenseProvider", "LicenseProvider\LicenseProvider.csproj", "{0F35DA91-256E-4D78-870D-13F7F2EB1BE8}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LicenseProvider.ResourceAssembly.Common", "LicenseProvider.ResourceAssembly.Common\LicenseProvider.ResourceAssembly.Common.csproj", "{C016FDDF-6EBA-4E56-B26A-AD78E3D72BF9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LicenseProvider.ResourceAssembly.LittlePhoenix", "LicenseProvider.ResourceAssembly.LittlePhoenix\LicenseProvider.ResourceAssembly.LittlePhoenix.csproj", "{33E5123A-3E8F-4F72-8B20-0CB622E43469}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{9BDF9631-AECA-473F-9448-ACBAFF4EE575}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LicenseProvider.Test", "LicenseProvider.Test\LicenseProvider.Test.csproj", "{6C419807-D73B-4B71-A079-7019EA2268B8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LicenseProvider.Test.Resource.Valid", "LicenseProvider.Test.Resource.Valid\LicenseProvider.Test.Resource.Valid.csproj", "{15782DDB-63F1-4EC5-B7E7-F0B3E23E58C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LicenseProvider.ResourceAssembly.Default", "LicenseProvider.ResourceAssembly.Default\LicenseProvider.ResourceAssembly.Default.csproj", "{C016FDDF-6EBA-4E56-B26A-AD78E3D72BF9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LicenseProvider.ResourceAssembly.Common.Test", "LicenseProvider.ResourceAssembly.Common.Test\LicenseProvider.ResourceAssembly.Common.Test.csproj", "{2AF37E36-0ECA-40F9-AEFA-AA5C6F94BB4E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LicenseProvider.ResourceAssembly.Default.Test", "LicenseProvider.ResourceAssembly.Default.Test\LicenseProvider.ResourceAssembly.Default.Test.csproj", "{2AF37E36-0ECA-40F9-AEFA-AA5C6F94BB4E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LicenseProvider.ResourceAssembly.LittlePhoenix.Test", "LicenseProvider.ResourceAssembly.LittlePhoenix.Test\LicenseProvider.ResourceAssembly.LittlePhoenix.Test.csproj", "{B754A4B5-7A79-4531-8AA5-C6195813A2F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,6 +29,14 @@ Global
 		{0F35DA91-256E-4D78-870D-13F7F2EB1BE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F35DA91-256E-4D78-870D-13F7F2EB1BE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F35DA91-256E-4D78-870D-13F7F2EB1BE8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C016FDDF-6EBA-4E56-B26A-AD78E3D72BF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C016FDDF-6EBA-4E56-B26A-AD78E3D72BF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C016FDDF-6EBA-4E56-B26A-AD78E3D72BF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C016FDDF-6EBA-4E56-B26A-AD78E3D72BF9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33E5123A-3E8F-4F72-8B20-0CB622E43469}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33E5123A-3E8F-4F72-8B20-0CB622E43469}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33E5123A-3E8F-4F72-8B20-0CB622E43469}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33E5123A-3E8F-4F72-8B20-0CB622E43469}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6C419807-D73B-4B71-A079-7019EA2268B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6C419807-D73B-4B71-A079-7019EA2268B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C419807-D73B-4B71-A079-7019EA2268B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -31,17 +45,23 @@ Global
 		{15782DDB-63F1-4EC5-B7E7-F0B3E23E58C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15782DDB-63F1-4EC5-B7E7-F0B3E23E58C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15782DDB-63F1-4EC5-B7E7-F0B3E23E58C9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C016FDDF-6EBA-4E56-B26A-AD78E3D72BF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C016FDDF-6EBA-4E56-B26A-AD78E3D72BF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C016FDDF-6EBA-4E56-B26A-AD78E3D72BF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C016FDDF-6EBA-4E56-B26A-AD78E3D72BF9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2AF37E36-0ECA-40F9-AEFA-AA5C6F94BB4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2AF37E36-0ECA-40F9-AEFA-AA5C6F94BB4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2AF37E36-0ECA-40F9-AEFA-AA5C6F94BB4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2AF37E36-0ECA-40F9-AEFA-AA5C6F94BB4E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B754A4B5-7A79-4531-8AA5-C6195813A2F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B754A4B5-7A79-4531-8AA5-C6195813A2F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B754A4B5-7A79-4531-8AA5-C6195813A2F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B754A4B5-7A79-4531-8AA5-C6195813A2F5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6C419807-D73B-4B71-A079-7019EA2268B8} = {9BDF9631-AECA-473F-9448-ACBAFF4EE575}
+		{15782DDB-63F1-4EC5-B7E7-F0B3E23E58C9} = {9BDF9631-AECA-473F-9448-ACBAFF4EE575}
+		{2AF37E36-0ECA-40F9-AEFA-AA5C6F94BB4E} = {9BDF9631-AECA-473F-9448-ACBAFF4EE575}
+		{B754A4B5-7A79-4531-8AA5-C6195813A2F5} = {9BDF9631-AECA-473F-9448-ACBAFF4EE575}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {676ABA8D-33D5-4D0D-B52C-066016CE2198}

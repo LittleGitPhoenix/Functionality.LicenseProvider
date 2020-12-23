@@ -31,10 +31,22 @@ namespace Phoenix.Functionality.LicenseProvider
 	public interface ISetDirectoryLicenseResolverConstructor : IAddAssemblyLicenseResolverConstructor
 	{
 		/// <summary> The default directory for saving the licenses will be used. See <see cref="LicenseResolverConfiguration.LicenseDirectory"/> for more information. </summary>
-		ILicenseResolverBuilder WithDefaultOutputDirectory();
+		ISetLogMissingLicenseResolverConstructor WithDefaultOutputDirectory();
 
 		/// <summary> The specified <paramref name="licenseDirectory"/> will be used for saving the licenses files. </summary>
-		ILicenseResolverBuilder WithOutputDirectory(DirectoryInfo licenseDirectory);
+		ISetLogMissingLicenseResolverConstructor WithOutputDirectory(DirectoryInfo licenseDirectory);
+	}
+
+	/// <summary>
+	/// <see cref="LicenseResolver"/> builder interface.
+	/// </summary>
+	public interface ISetLogMissingLicenseResolverConstructor : ISetDirectoryLicenseResolverConstructor
+	{
+		/// <summary> Assembly for which no license could be resolved will be logged to a separate file. </summary>
+		ILicenseResolverBuilder LogMissingLicensesToFile();
+
+		/// <summary> Assembly for which no license could be resolved won't be logged to a separate file. </summary>
+		ILicenseResolverBuilder DoNotLogMissingLicensesToFile();
 	}
 
 	/// <summary>
@@ -51,12 +63,15 @@ namespace Phoenix.Functionality.LicenseProvider
 	internal sealed class LicenseResolverConstructor
 		: IAddAssemblyLicenseResolverConstructor,
 			ISetDirectoryLicenseResolverConstructor,
+			ISetLogMissingLicenseResolverConstructor,
 			ILicenseResolverBuilder
 	{
 		private readonly HashSet<Assembly> _resourceAssemblies;
 
-		private DirectoryInfo _licenseDirectory;
+		private DirectoryInfo? _licenseDirectory;
 
+		private bool _logMissing;
+		
 		public LicenseResolverConstructor()
 		{
 			_resourceAssemblies = new HashSet<Assembly>();
@@ -78,20 +93,42 @@ namespace Phoenix.Functionality.LicenseProvider
 		}
 
 		/// <inheritdoc />
-		public ILicenseResolverBuilder WithDefaultOutputDirectory()
-			=> this.WithOutputDirectory(null);
+		public ISetLogMissingLicenseResolverConstructor WithDefaultOutputDirectory()
+		{
+			return this;
+		}
 
 		/// <inheritdoc />
-		public ILicenseResolverBuilder WithOutputDirectory(DirectoryInfo licenseDirectory)
+		public ISetLogMissingLicenseResolverConstructor WithOutputDirectory(DirectoryInfo licenseDirectory)
 		{
 			_licenseDirectory = licenseDirectory;
 			return this;
 		}
 		
 		/// <inheritdoc />
+		public ILicenseResolverBuilder LogMissingLicensesToFile()
+		{
+			_logMissing = true;
+			return this;
+		}
+
+		/// <inheritdoc />
+		public ILicenseResolverBuilder DoNotLogMissingLicensesToFile()
+		{
+			_logMissing = false;
+			return this;
+		}
+		
+		/// <inheritdoc />
 		public LicenseResolver Build()
 		{
-			return new LicenseResolver(new LicenseResolverConfiguration(_licenseDirectory, _resourceAssemblies.ToArray()));
+			return new LicenseResolver
+			(
+				new LicenseResolverConfiguration(_licenseDirectory, _resourceAssemblies.ToArray())
+				{
+					LogMissingLicensesToFile = _logMissing
+				}
+			);
 		}
 	}
 }

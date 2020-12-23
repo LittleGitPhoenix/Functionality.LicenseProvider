@@ -2,14 +2,11 @@
 
 	<PropertyGroup>
 		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+		<WarningsAsErrors>nullable</WarningsAsErrors>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
-
-	<ItemGroup>
-		<Compile Remove="Licenses\**" />
-		<EmbeddedResource Remove="Licenses\**" />
-		<None Remove="Licenses\**" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="AutoFixture.AutoMoq" Version="4.14.0" />
@@ -19,7 +16,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\LicenseProvider.Test.Resource.Valid\LicenseProvider.Test.Resource.Valid.csproj" />
+		<ProjectReference Include="..\LicenseProvider.ResourceAssembly.Common\LicenseProvider.ResourceAssembly.Common.csproj" />
 		<ProjectReference Include="..\LicenseProvider\LicenseProvider.csproj" />
 	</ItemGroup>
 

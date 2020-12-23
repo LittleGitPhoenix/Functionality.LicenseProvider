@@ -32,10 +32,10 @@ namespace Phoenix.Functionality.LicenseProvider
 		public string ResourceName { get; }
 
 		/// <summary> This is only available if the xml could not be created from the string content. </summary>
-		public XmlException ParseException { get; }
+		public XmlException? ParseException { get; }
 
 		/// <summary> This is only available if the xml could not be created from the string content. </summary>
-		public string XmlString { get; }
+		public string? XmlString { get; }
 
 		#endregion
 

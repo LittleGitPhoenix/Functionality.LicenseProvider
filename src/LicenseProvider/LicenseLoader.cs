@@ -45,9 +45,10 @@ namespace Phoenix.Functionality.LicenseProvider
 		/// </summary>
 		/// <param name="resourceAssemblies"> A collection of <see cref="Assembly"/>s containing embedded xml resource files. </param>
 		/// <returns></returns>
-		internal static ICollection<LicenseConfiguration> LoadLicenseConfigurationsFromAssemblies(params Assembly[] resourceAssemblies)
+		internal static IReadOnlyCollection<LicenseConfiguration> LoadLicenseConfigurationsFromAssemblies(params Assembly[] resourceAssemblies)
 		{
 			var allConfigurations = resourceAssemblies
+				.Distinct()
 				.Select
 				(
 					resourceAssembly =>
@@ -55,6 +56,7 @@ namespace Phoenix.Functionality.LicenseProvider
 						return LicenseLoader.GetAllXmlLicenseResources(resourceAssembly)
 							.Select(resourceName => LicenseLoader.LoadLicenseConfigurationFromAssembly(resourceAssembly, resourceName))
 							.Where(configuration => configuration != null)
+							.Cast<LicenseConfiguration>() //! This is needed to make the generic list not-nullable.
 							.ToArray()
 							;
 					}
@@ -64,7 +66,7 @@ namespace Phoenix.Functionality.LicenseProvider
 
 			// TODO: Instead of merging via simply combining the lists, use an algorithm that filters and sorts duplicate entries by taking the corresponding AssemblyNameMatchMode into consideration.
 			// Merge the multitude of configurations into one.
-			return allConfigurations.SelectMany(configurations => configurations).ToList();
+			return allConfigurations.SelectMany(configurations => configurations).ToList().AsReadOnly();
 		}
 
 		/// <summary>
@@ -73,7 +75,7 @@ namespace Phoenix.Functionality.LicenseProvider
 		/// <param name="resourceAssembly"> The <see cref="Assembly"/> from where to load the resource. </param>
 		/// <param name="resourceName"> The name of the embedded xml license file. </param>
 		/// <returns> A new <see cref="LicenseConfiguration"/> on success, otherwise <c>Null</c>. </returns>
-		internal static LicenseConfiguration LoadLicenseConfigurationFromAssembly(Assembly resourceAssembly, string resourceName)
+		internal static LicenseConfiguration? LoadLicenseConfigurationFromAssembly(Assembly resourceAssembly, string resourceName)
 		{
 			// Create a xml document and then a new license configuration object from it.
 			var xml = LicenseLoader.LoadResourceXmlFromAssembly(resourceAssembly, resourceName);
@@ -87,11 +89,14 @@ namespace Phoenix.Functionality.LicenseProvider
 		/// <param name="resourceAssembly"> The <see cref="Assembly"/> from where to load the resource. </param>
 		/// <param name="resourceName"> The name of the embedded xml license file. </param>
 		/// <returns> A new <see cref="ResourceXmlDocument"/> on success, otherwise <c>Null</c>. </returns>
-		internal static ResourceXmlDocument LoadResourceXmlFromAssembly(Assembly resourceAssembly, string resourceName)
+		internal static ResourceXmlDocument? LoadResourceXmlFromAssembly(Assembly resourceAssembly, string resourceName)
 		{
 			// Get the content of the embedded xml resource.
 			var xmlString = LicenseLoader.GetLicenseContent(resourceAssembly, resourceName);
 			if (String.IsNullOrWhiteSpace(xmlString)) return null;
+#if NETFRAMEWORK || NETSTANDARD || NETCOREAPP1_0 || NETCOREAPP1_1 || NETCOREAPP2_0 || NETCOREAPP2_1 || NETCOREAPP2_2 || NETCOREAPP3_0 || NETCOREAPP3_1
+			if (xmlString is null) return null;
+#endif
 
 			// Create a special xml document from the above string.
 			return new ResourceXmlDocument(resourceAssembly, resourceName, xmlString);
@@ -115,7 +120,7 @@ namespace Phoenix.Functionality.LicenseProvider
 		/// <param name="resourceAssembly"> The <see cref="Assembly"/> from where to load the resource. </param>
 		/// <param name="resourceName"> The name of the embedded xml license file. </param>
 		/// <returns> The content as string. </returns>
-		internal static string GetLicenseContent(Assembly resourceAssembly, string resourceName)
+		internal static string? GetLicenseContent(Assembly resourceAssembly, string resourceName)
 		{
 			var internalResource = resourceAssembly.GetManifestResourceStream(resourceName);
 			if (internalResource is null) return null; // Should not happen as only existing resources are iterated.
@@ -128,6 +133,6 @@ namespace Phoenix.Functionality.LicenseProvider
 			}
 		}
 
-		#endregion
+#endregion
 	}
 }

@@ -1,0 +1,59 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net5.0;netstandard2.0;net45</TargetFrameworks>
+		<AssemblyName>Phoenix.Functionality.LicenseProvider.ResourceAssembly.Common</AssemblyName>
+		<RootNamespace>Phoenix.Functionality.LicenseProvider.ResourceAssembly.Common</RootNamespace>
+		<Authors>Felix Leistner</Authors>
+		<Company>Little Phoenix</Company>
+		<Version>1.1.0</Version>
+		<Copyright>2020</Copyright>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<Description>Contains embedded license xml resources for assemblies used in common development.</Description>
+		<PackageIcon>nuget.png</PackageIcon>
+		<PackageReadmeFile>readme.md</PackageReadmeFile>
+		<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+		<PackageIconUrl>https://www.little-phoenix.de/nuget/nuget.ico</PackageIconUrl>
+		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\..\nuget.png" Pack="true" PackagePath="" Link="⬙\nuget.png" />
+		<None Include="..\..\README.md" Pack="true" PackagePath="" Link="⬙\README.md" />
+		<None Include="..\..\LICENSE.md" Pack="true" PackagePath="" Link="⬙\LICENSE.md" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Licenses\Autofac.xml" />
+		<EmbeddedResource Include="Licenses\ControlzEx.xml" />
+		<EmbeddedResource Include="Licenses\EntityFramework.xml" />
+		<EmbeddedResource Include="Licenses\EntityFrameworkCore.xml" />
+		<EmbeddedResource Include="Licenses\ExcelDataReader.xml" />
+		<EmbeddedResource Include="Licenses\Extended WPF Toolkit.xml" />
+		<EmbeddedResource Include="Licenses\FileHelpers.xml" />
+		<EmbeddedResource Include="Licenses\Flurl.Http.Xml.xml" />
+		<EmbeddedResource Include="Licenses\Flurl.xml" />
+		<EmbeddedResource Include="Licenses\gRPC.xml" />
+		<EmbeddedResource Include="Licenses\Humanizer.xml" />
+		<EmbeddedResource Include="Licenses\MahApps.Metro.IconPacks.xml" />
+		<EmbeddedResource Include="Licenses\MahApps.Metro.xml" />
+		<EmbeddedResource Include="Licenses\MigraDoc.xml" />
+		<EmbeddedResource Include="Licenses\MoreLinq.xml" />
+		<EmbeddedResource Include="Licenses\MouseKeyHook.xml" />
+		<EmbeddedResource Include="Licenses\Newtonsoft.Json.xml" />
+		<EmbeddedResource Include="Licenses\NLog.xml" />
+		<EmbeddedResource Include="Licenses\PDFSharp.xml" />
+		<EmbeddedResource Include="Licenses\RestSharp.xml" />
+		<EmbeddedResource Include="Licenses\Stylet.xml" />
+		<EmbeddedResource Include="Licenses\System.Linq.Async.xml" />
+		<EmbeddedResource Include="Licenses\System.ValueTuple.xml" />
+		<EmbeddedResource Include="Licenses\WindowsAPICodePack.xml" />
+		<EmbeddedResource Include="Licenses\ZXing.Net.xml" />
+	</ItemGroup>
+
+	<!-- Move the created NuGet packages into another folder. -->
+	<Target Name="MovePackage" AfterTargets="Pack">
+		<Move SourceFiles="$(BaseOutputPath)$(Configuration)\$(PackageId).$(PackageVersion).nupkg" DestinationFiles="$(BaseOutputPath)$(Configuration)\..\..\..\..\.nuget\$(PackageId).$(PackageVersion).nupkg" />
+	</Target>
+
+</Project>

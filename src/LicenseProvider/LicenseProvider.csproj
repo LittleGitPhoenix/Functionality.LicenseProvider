@@ -1,29 +1,45 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>netstandard2.0</TargetFramework>
+		<TargetFrameworks>net5.0;netstandard2.0;net45</TargetFrameworks>
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+		<WarningsAsErrors>nullable</WarningsAsErrors>
 		<AssemblyName>Phoenix.Functionality.LicenseProvider</AssemblyName>
 		<RootNamespace>Phoenix.Functionality.LicenseProvider</RootNamespace>
+		<Version>1.1.0</Version>
+		<Authors>Felix Leistner</Authors>
+		<Company>Little Phoenix</Company>
+		<Copyright>2020</Copyright>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<IncludeSymbols>true</IncludeSymbols>
-		<Version>1.0.1</Version>
-		<Authors>Felix Leistner</Authors>
-		<Company>Little Phoenix</Company>
 		<Description>Dynamic license provider for assemblies referenced by an application.</Description>
-		<Copyright>2020</Copyright>
+		<PackageIcon>nuget.png</PackageIcon>
+		<PackageReadmeFile>readme.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<DocumentationFile></DocumentationFile>
+		<PackageIconUrl>https://www.little-phoenix.de/nuget/nuget.ico</PackageIconUrl>
+		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Include="..\..\LICENSE.md">
-	    <Pack>True</Pack>
-	    <PackagePath></PackagePath>
-	  </None>
+	  <None Remove="Licenses\Phoenix.Functionality.LicenseProvider.xml" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Include="Licenses\Phoenix.Functionality.LicenseProvider.xml" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="..\..\nuget.png" Pack="true" PackagePath="" Link="⬙\nuget.png" />
+		<None Include="..\..\README.md" Pack="true" PackagePath="" Link="⬙\README.md" />
+		<None Include="..\..\LICENSE.md" Pack="true" PackagePath="" Link="⬙\LICENSE.md" />
+	</ItemGroup>
+
+	<!-- Move the created NuGet packages into another folder. -->
+	<Target Name="MovePackage" AfterTargets="Pack">
+		<Move SourceFiles="$(BaseOutputPath)$(Configuration)\$(PackageId).$(PackageVersion).symbols.nupkg" DestinationFiles="$(BaseOutputPath)$(Configuration)\..\..\..\..\.nuget\$(PackageId).$(PackageVersion).nupkg" />
+		<Delete Files="$(BaseOutputPath)$(Configuration)\$(PackageId).$(PackageVersion).nupkg" />
+	</Target>
 
 </Project>

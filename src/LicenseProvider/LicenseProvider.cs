@@ -9,7 +9,7 @@ using System.Reflection;
 namespace Phoenix.Functionality.LicenseProvider
 {
 	/// <summary>
-	/// Represents a single license.
+	/// Represents a single license, where the license text will by dynamically loaded from embedded resources.
 	/// </summary>
 	public class LicenseProvider
 	{
@@ -62,7 +62,7 @@ namespace Phoenix.Functionality.LicenseProvider
 
 		#region Methods
 
-		internal string GetLicenseText()
+		internal string? GetLicenseText()
 		{
 			var xml = LicenseLoader.LoadResourceXmlFromAssembly(_containingAssembly, _resourceName);
 			var content = XmlHelper.GetSingleNodeValue(xml, $"//information[1]/license[{_nodePosition}]");

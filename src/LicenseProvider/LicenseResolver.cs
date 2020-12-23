@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Phoenix.Functionality.LicenseProvider
 {
@@ -24,7 +25,7 @@ namespace Phoenix.Functionality.LicenseProvider
 		#endregion
 
 		#region Fields
-
+		
 		/// <summary> The <see cref="LicenseResolverConfiguration"/> of this instance. </summary>
 		private readonly LicenseResolverConfiguration _configuration;
 		
@@ -36,7 +37,7 @@ namespace Phoenix.Functionality.LicenseProvider
 		#region Properties
 
 		/// <summary> Collection of all available <see cref="LicenseConfiguration"/>s. </summary>
-		public ICollection<LicenseConfiguration> LicenseConfigurations { get; }
+		public IReadOnlyCollection<LicenseConfiguration> LicenseConfigurations { get; }
 
 		#endregion
 
@@ -55,10 +56,13 @@ namespace Phoenix.Functionality.LicenseProvider
 		{
 			// Save parameters.
 			_configuration = configuration;
-			
+
 			// Initialize fields.
 			_loadedAssemblies = new HashSet<AssemblyName>();
-			this.LicenseConfigurations = LicenseLoader.LoadLicenseConfigurationsFromAssemblies(configuration.ResourceAssemblies);
+
+			// Always add this assembly as source for licenses.
+			var resourceAssemblies = configuration.ResourceAssemblies.Concat(new[] {Assembly.GetExecutingAssembly()}).ToArray();
+			this.LicenseConfigurations = LicenseLoader.LoadLicenseConfigurationsFromAssemblies(resourceAssemblies);
 		}
 
 		/// <summary>
@@ -76,18 +80,22 @@ namespace Phoenix.Functionality.LicenseProvider
 		/// <summary>
 		/// Starts monitoring <see cref="Assembly"/> loading and tries to provide license information for each.
 		/// </summary>
-		public void Start()
+		/// <returns> The current instance. </returns>
+		public LicenseResolver Start()
 		{
 			this.UpdatedLoadedAssemblies();
 			AppDomain.CurrentDomain.AssemblyLoad += this.AssemblyLoaded;
+			return this;
 		}
 
 		/// <summary>
 		/// Stops monitoring <see cref="Assembly"/> loading.
 		/// </summary>
-		public void Stop()
+		/// <returns> The current instance. </returns>
+		public LicenseResolver Stop()
 		{
 			AppDomain.CurrentDomain.AssemblyLoad -= this.AssemblyLoaded;
+			return this;
 		}
 
 		private void UpdatedLoadedAssemblies()
@@ -99,7 +107,7 @@ namespace Phoenix.Functionality.LicenseProvider
 				;
 		}
 
-		private void AssemblyLoaded(object sender, AssemblyLoadEventArgs args)
+		private void AssemblyLoaded(object? sender, AssemblyLoadEventArgs args)
 		{
 			var loadedAssembly = args.LoadedAssembly;
 			this.TryAddNewAssembly(loadedAssembly);
@@ -124,6 +132,11 @@ namespace Phoenix.Functionality.LicenseProvider
 					)
 					{
 						System.Diagnostics.Trace.WriteLine($"LICENSE PROVIDER: Could not find license for '{assemblyInformation.Name}' in Version {assemblyInformation.Version}.");
+						if (_configuration.LogMissingLicensesToFile)
+						{
+							var licenseDirectory = _configuration.GetAndCreateLicenseDirectory();
+							File.AppendAllText(Path.Combine(licenseDirectory.FullName, ".missing.txt"), newAssembly.FullName + "\n");
+						}
 					}
 				}
 			}
@@ -133,11 +146,11 @@ namespace Phoenix.Functionality.LicenseProvider
 		{
 			// Find a matching license provider.
 			if (!this.TryGetLicenseProvider(assemblyInformation, out var licenseProvider)) return false;
-			
+
 			// Save the license into a file.
-			if (!_configuration.LicenseDirectory.Exists) _configuration.LicenseDirectory.Create();
-			var licenseText = licenseProvider.GetLicenseText();
-			File.WriteAllText(Path.Combine(_configuration.LicenseDirectory.FullName, licenseProvider.FileName), licenseText, Encoding.UTF8);
+			var licenseDirectory = _configuration.GetAndCreateLicenseDirectory();
+			var licenseText = licenseProvider!.GetLicenseText();
+			File.WriteAllText(Path.Combine(licenseDirectory.FullName, licenseProvider.FileName), licenseText, Encoding.UTF8);
 			return true;
 		}
 
@@ -147,7 +160,11 @@ namespace Phoenix.Functionality.LicenseProvider
 		/// <param name="assemblyInformation"> Information about the assembly for which to get license information. </param>
 		/// <param name="licenseProvider"> The <see cref="LicenseProvider"/> that will be filled. </param>
 		/// <returns> <c>True</c> on success, otherwise <c>False</c>. </returns>
-		private bool TryGetLicenseProvider(AssemblyName assemblyInformation, out LicenseProvider licenseProvider)
+#if NETFRAMEWORK || NETSTANDARD || NETCOREAPP1_0 || NETCOREAPP1_1 || NETCOREAPP2_0 || NETCOREAPP2_1 || NETCOREAPP2_2 || NETCOREAPP3_0 || NETCOREAPP3_1
+		internal bool TryGetLicenseProvider(AssemblyName assemblyInformation, out LicenseProvider? licenseProvider)
+#else
+		internal bool TryGetLicenseProvider(AssemblyName assemblyInformation, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out LicenseProvider? licenseProvider)
+#endif
 			=> LicenseResolver.TryGetLicenseProvider(assemblyInformation.Name, assemblyInformation.Version, this.LicenseConfigurations, out licenseProvider);
 
 		/// <summary>
@@ -158,8 +175,18 @@ namespace Phoenix.Functionality.LicenseProvider
 		/// <param name="licenseConfigurations"> A collection of <see cref="LicenseConfiguration"/>s used for matching. </param>
 		/// <param name="licenseProvider"> The <see cref="LicenseProvider"/> that will be filled. </param>
 		/// <returns> <c>True</c> on success, otherwise <c>False</c>. </returns>
-		internal static bool TryGetLicenseProvider(string assemblyName, Version assemblyVersion, ICollection<LicenseConfiguration> licenseConfigurations, out LicenseProvider licenseProvider)
+#if NETFRAMEWORK || NETSTANDARD || NETCOREAPP1_0 || NETCOREAPP1_1 || NETCOREAPP2_0 || NETCOREAPP2_1 || NETCOREAPP2_2 || NETCOREAPP3_0 || NETCOREAPP3_1
+		internal static bool TryGetLicenseProvider(string? assemblyName, Version? assemblyVersion, IReadOnlyCollection<LicenseConfiguration> licenseConfigurations, out LicenseProvider? licenseProvider)
+#else
+		internal static bool TryGetLicenseProvider(string? assemblyName, Version? assemblyVersion, IReadOnlyCollection<LicenseConfiguration> licenseConfigurations, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out LicenseProvider? licenseProvider)
+#endif
 		{
+			if (String.IsNullOrWhiteSpace(assemblyName) || assemblyVersion is null)
+			{
+				licenseProvider = null;
+				return false;
+			}
+			
 			licenseProvider = licenseConfigurations
 				.FirstOrDefault
 				(
@@ -168,14 +195,16 @@ namespace Phoenix.Functionality.LicenseProvider
 						switch (configuration.NameMatchMode)
 						{
 							case AssemblyNameMatchMode.Contains:
-								return assemblyName.Contains(configuration.AssemblyName);
+								return assemblyName!.Contains(configuration.AssemblyIdentifier);
 							case AssemblyNameMatchMode.StartsWith:
-								return assemblyName.StartsWith(configuration.AssemblyName);
+								return assemblyName!.StartsWith(configuration.AssemblyIdentifier);
 							case AssemblyNameMatchMode.EndsWith:
-								return assemblyName.EndsWith(configuration.AssemblyName);
+								return assemblyName!.EndsWith(configuration.AssemblyIdentifier);
+							case AssemblyNameMatchMode.RegEx:
+								return new Regex(configuration.AssemblyIdentifier, RegexOptions.IgnoreCase).IsMatch(assemblyName!);
 							case AssemblyNameMatchMode.Exact:
 							default:
-								return String.Equals(configuration.AssemblyName, assemblyName, StringComparison.OrdinalIgnoreCase);
+								return String.Equals(configuration.AssemblyIdentifier, assemblyName, StringComparison.OrdinalIgnoreCase);
 						}
 					}
 				)
@@ -187,6 +216,6 @@ namespace Phoenix.Functionality.LicenseProvider
 			return licenseProvider != null;
 		}
 		
-		#endregion
+#endregion
 	}
 }

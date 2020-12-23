@@ -2,15 +2,14 @@ using System;
 using System.IO;
 using System.Linq;
 using LicenseProvider.Test.Resource.Valid;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Phoenix.Functionality.LicenseProvider;
 
 namespace LicenseProvider.Test
 {
-	[TestClass]
 	public class LicenseLoaderTest
 	{
-		[TestMethod]
+		[Test]
 		public void Check_LoadAllLicenseConfigurationsFromAssembly()
 		{
 			var resourceAssembly = typeof(Reference).Assembly;
@@ -19,7 +18,7 @@ namespace LicenseProvider.Test
 
 			var resource = resources.SingleOrDefault();
 			Assert.IsNotNull(resource);
-			Assert.AreEqual(resourceAssembly.GetName().Name, resource.AssemblyName);
+			Assert.AreEqual(resourceAssembly.GetName().Name, resource.AssemblyIdentifier);
 			Assert.AreEqual(AssemblyNameMatchMode.StartsWith, resource.NameMatchMode);
 
 			var licenseProviders = resource.LicenseProviders;
