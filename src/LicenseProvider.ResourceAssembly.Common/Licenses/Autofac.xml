@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <information
 	assemblyName="Autofac"
-	matchMode="Exact"
+	matchMode="StartsWith"
 >
 	<license version="0.0.0" fileName="Autofac.txt">
 The MIT License (MIT)

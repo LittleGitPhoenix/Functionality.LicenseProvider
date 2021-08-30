@@ -2,7 +2,8 @@
 //! This file is subject to the terms and conditions defined in file 'LICENSE.md', which is part of this source code package.
 #endregion
 
-
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -31,6 +32,9 @@ namespace Phoenix.Functionality.LicenseProvider
 		/// <summary> Assemblies that will be searched for embedded xml license files. </summary>
 		public Assembly[] ResourceAssemblies { get; }
 
+		/// <summary> A collection of assemblies that will not be be handled by the license provider. </summary>
+		public IReadOnlyCollection<ExcludedLicenseConfiguration> ExcludedAssemblies { get; set; }
+
 		/// <summary> Should the name of assemblies for which no license could be resolved be written to a file. </summary>
 		public bool LogMissingLicensesToFile { get; init; }
 		
@@ -41,13 +45,15 @@ namespace Phoenix.Functionality.LicenseProvider
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public LicenseResolverConfiguration() : this(null, Assembly.GetCallingAssembly()) { }
+		public LicenseResolverConfiguration()
+			: this(null, Assembly.GetCallingAssembly()) { }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="licenseDirectory"> <see cref="LicenseDirectory"/> </param>
-		public LicenseResolverConfiguration(DirectoryInfo? licenseDirectory) : this(licenseDirectory, Assembly.GetCallingAssembly()) { }
+		public LicenseResolverConfiguration(DirectoryInfo? licenseDirectory)
+			: this(licenseDirectory, Assembly.GetCallingAssembly()) { }
 
 		/// <summary>
 		/// Constructor
@@ -55,9 +61,27 @@ namespace Phoenix.Functionality.LicenseProvider
 		/// <param name="licenseDirectory"> <see cref="LicenseDirectory"/> </param>
 		/// <param name="resourceAssemblies"> <see cref="ResourceAssemblies"/> </param>
 		public LicenseResolverConfiguration(DirectoryInfo? licenseDirectory, params Assembly[] resourceAssemblies)
+			: this(licenseDirectory, new ExcludedLicenseConfiguration[0], resourceAssemblies) { }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="licenseDirectory"> <see cref="LicenseDirectory"/> </param>
+		/// <param name="resourceAssemblies"> <see cref="ResourceAssemblies"/> </param>
+		/// <param name="excludedAssemblies"> <see cref="ExcludedAssemblies"/> </param>
+		public LicenseResolverConfiguration(DirectoryInfo? licenseDirectory, IReadOnlyCollection<ExcludedLicenseConfiguration> excludedAssemblies, params Assembly[] resourceAssemblies)
 		{
 			this.LicenseDirectory = licenseDirectory ?? new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), ".licenses"));
 			this.ResourceAssemblies = resourceAssemblies.Distinct().ToArray();
+
+			// Build the excluded assemblies.
+			this.ExcludedAssemblies = new[]
+				{
+					new ExcludedLicenseConfiguration("microsoft.net", AssemblyNameMatchMode.Contains),
+				}
+				.Concat(excludedAssemblies)
+				.ToArray()
+				;
 		}
 
 		#endregion

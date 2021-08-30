@@ -31,22 +31,43 @@ namespace Phoenix.Functionality.LicenseProvider
 	public interface ISetDirectoryLicenseResolverConstructor : IAddAssemblyLicenseResolverConstructor
 	{
 		/// <summary> The default directory for saving the licenses will be used. See <see cref="LicenseResolverConfiguration.LicenseDirectory"/> for more information. </summary>
-		ISetLogMissingLicenseResolverConstructor WithDefaultOutputDirectory();
+		ISetExcludedAssembliesLicenseResolverConstructor WithDefaultOutputDirectory();
 
 		/// <summary> The specified <paramref name="licenseDirectory"/> will be used for saving the licenses files. </summary>
-		ISetLogMissingLicenseResolverConstructor WithOutputDirectory(DirectoryInfo licenseDirectory);
+		ISetExcludedAssembliesLicenseResolverConstructor WithOutputDirectory(DirectoryInfo licenseDirectory);
 	}
 
 	/// <summary>
 	/// <see cref="LicenseResolver"/> builder interface.
 	/// </summary>
-	public interface ISetLogMissingLicenseResolverConstructor : ISetDirectoryLicenseResolverConstructor
+	public interface ISetExcludedAssembliesLicenseResolverConstructor : ISetDirectoryLicenseResolverConstructor
+	{
+		/// <summary> Assembly for which no license could be resolved will be logged to a separate file. </summary>
+		ISetAdditionalExcludedAssembliesLicenseResolverConstructor ExcludeAssembly((string AssemblyIdentifier, AssemblyNameMatchMode NameMatchMode) tuple);
+
+		/// <summary> Assembly for which no license could be resolved won't be logged to a separate file. </summary>
+		ISetLogMissingLicenseResolverConstructor DoNotExcludeAssemblies();
+	}
+
+	/// <summary>
+	/// <see cref="LicenseResolver"/> builder interface.
+	/// </summary>
+	public interface ISetLogMissingLicenseResolverConstructor : ISetExcludedAssembliesLicenseResolverConstructor
 	{
 		/// <summary> Assembly for which no license could be resolved will be logged to a separate file. </summary>
 		ILicenseResolverBuilder LogMissingLicensesToFile();
 
 		/// <summary> Assembly for which no license could be resolved won't be logged to a separate file. </summary>
 		ILicenseResolverBuilder DoNotLogMissingLicensesToFile();
+	}
+
+	/// <summary>
+	/// <see cref="LicenseResolver"/> builder interface.
+	/// </summary>
+	public interface ISetAdditionalExcludedAssembliesLicenseResolverConstructor : ISetLogMissingLicenseResolverConstructor
+	{
+		/// <inheritdoc cref="ISetExcludedAssembliesLicenseResolverConstructor.ExcludeAssembly" />
+		new ISetAdditionalExcludedAssembliesLicenseResolverConstructor ExcludeAssembly((string AssemblyIdentifier, AssemblyNameMatchMode NameMatchMode) tuple);
 	}
 
 	/// <summary>
@@ -63,18 +84,23 @@ namespace Phoenix.Functionality.LicenseProvider
 	internal sealed class LicenseResolverConstructor
 		: IAddAssemblyLicenseResolverConstructor,
 			ISetDirectoryLicenseResolverConstructor,
+			ISetExcludedAssembliesLicenseResolverConstructor,
 			ISetLogMissingLicenseResolverConstructor,
+			ISetAdditionalExcludedAssembliesLicenseResolverConstructor,
 			ILicenseResolverBuilder
 	{
 		private readonly HashSet<Assembly> _resourceAssemblies;
 
 		private DirectoryInfo? _licenseDirectory;
 
+		private IList<ExcludedLicenseConfiguration> _excludedLicenseConfigurations;
+
 		private bool _logMissing;
 		
 		public LicenseResolverConstructor()
 		{
 			_resourceAssemblies = new HashSet<Assembly>();
+			_excludedLicenseConfigurations = new List<ExcludedLicenseConfiguration>();
 		}
 
 		/// <inheritdoc />
@@ -93,18 +119,31 @@ namespace Phoenix.Functionality.LicenseProvider
 		}
 
 		/// <inheritdoc />
-		public ISetLogMissingLicenseResolverConstructor WithDefaultOutputDirectory()
+		public ISetExcludedAssembliesLicenseResolverConstructor WithDefaultOutputDirectory()
 		{
 			return this;
 		}
 
 		/// <inheritdoc />
-		public ISetLogMissingLicenseResolverConstructor WithOutputDirectory(DirectoryInfo licenseDirectory)
+		public ISetExcludedAssembliesLicenseResolverConstructor WithOutputDirectory(DirectoryInfo licenseDirectory)
 		{
 			_licenseDirectory = licenseDirectory;
 			return this;
 		}
-		
+
+		/// <inheritdoc cref="ISetExcludedAssembliesLicenseResolverConstructor.ExcludeAssembly" />
+		public ISetAdditionalExcludedAssembliesLicenseResolverConstructor ExcludeAssembly((string AssemblyIdentifier, AssemblyNameMatchMode NameMatchMode) tuple)
+		{
+			_excludedLicenseConfigurations.Add(tuple);
+			return this;
+		}
+
+		/// <inheritdoc />
+		public ISetLogMissingLicenseResolverConstructor DoNotExcludeAssemblies()
+		{
+			return this;
+		}
+
 		/// <inheritdoc />
 		public ILicenseResolverBuilder LogMissingLicensesToFile()
 		{

@@ -1,6 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using AutoFixture;
+using AutoFixture.AutoMoq;
+using Moq;
 using NUnit.Framework;
 using Phoenix.Functionality.LicenseProvider;
 
@@ -8,6 +11,16 @@ namespace LicenseProvider.Test
 {
 	public class LicenseResolverTest
 	{
+#pragma warning disable 8618 // → Always initialized in the 'Setup' method before a test is run.
+		private IFixture _fixture;
+#pragma warning restore 8618
+
+		[SetUp]
+		public void Setup()
+		{
+			_fixture = new Fixture().Customize(new AutoMoqCustomization());
+		}
+
 		[Test]
 		public void GetLicenseProvider_Succeeds()
 		{
@@ -43,6 +56,10 @@ namespace LicenseProvider.Test
 		[TestCase("Assembly02.Base.Other", @".Base", AssemblyNameMatchMode.EndsWith, false)]
 		[TestCase("Assembly_With_#04", @"with.*\d", AssemblyNameMatchMode.RegEx, true)]
 		[TestCase("Assembly_Without_Number", @"with.*\d", AssemblyNameMatchMode.RegEx, false)]
+		[TestCase("UPPERCASE", @"uppercase", AssemblyNameMatchMode.Contains, true)]
+		[TestCase("My.UPPERCASE.Assembly", @"uppercase", AssemblyNameMatchMode.Contains, true)]
+		[TestCase("UPPERCASE.Assembly", @"uppercase", AssemblyNameMatchMode.StartsWith, true)]
+		[TestCase("My.UPPERCASE", @"uppercase", AssemblyNameMatchMode.EndsWith, true)]
 		public void GetLicenseProvider_Succeeds(string assemblyName, string assemblyIdentifier, AssemblyNameMatchMode matchMode, bool result)
 		{
 			// Arrange
@@ -56,7 +73,7 @@ namespace LicenseProvider.Test
 			var licenseConfiguration = new LicenseConfiguration(assemblyIdentifier, matchMode, licenseProviders);
 
 			// Act
-			var success = LicenseResolver.TryGetLicenseProvider(assemblyName, targetAssemblyVersion, new List<LicenseConfiguration>() { licenseConfiguration }, out var licenseProvider);
+			var success = LicenseResolver.TryGetLicenseProvider(assemblyName, targetAssemblyVersion, new List<LicenseConfiguration>() { licenseConfiguration }, out _);
 
 			// Assert
 			Assert.That(success, Is.EqualTo(result));
@@ -92,6 +109,7 @@ namespace LicenseProvider.Test
 				.Construct()
 				.AddCurrentAssembly()
 				.WithDefaultOutputDirectory()
+				.DoNotExcludeAssemblies()
 				.DoNotLogMissingLicensesToFile()
 				.Build()
 				;
@@ -115,6 +133,46 @@ namespace LicenseProvider.Test
 			// Act + Assert
 			var licenseText = licenseProvider.GetLicenseText();
 			Assert.IsNotNull(licenseText);
+		}
+
+		[Test]
+		public void Check_Not_Excluded_Assemblies_Are_Processed()
+		{
+			// Arrange
+			var assembly = typeof(System.Object).Assembly;
+			var licenseResolverMock = _fixture.Create<Mock<LicenseResolver>>();
+			licenseResolverMock
+				.Setup(resolver => resolver.HandleAssemblyLicense(It.IsAny<AssemblyName>()))
+				.Returns(false)
+				;
+			var licenseResolver = licenseResolverMock.Object;
+
+			// Act
+			licenseResolver.TryAddNewAssembly(assembly);
+
+			// Assert
+			licenseResolverMock.Verify(resolver => resolver.HandleAssemblyLicense(It.IsAny<AssemblyName>()), Times.Once);
+		}
+
+		[Test]
+		public void Check_Excluded_Assemblies_Are_Completely_Ignored()
+		{
+			// Arrange
+			var assembly = typeof(System.Object).Assembly;
+			var licenseResolverConfiguration = new LicenseResolverConfiguration(licenseDirectory: null, excludedAssemblies: new[] { (ExcludedLicenseConfiguration)("System", AssemblyNameMatchMode.StartsWith) });
+			_fixture.Inject(licenseResolverConfiguration);
+			var licenseResolverMock = _fixture.Create<Mock<LicenseResolver>>();
+			licenseResolverMock
+				.Setup(resolver => resolver.HandleAssemblyLicense(It.IsAny<AssemblyName>()))
+				.Returns(false)
+				;
+			var licenseResolver = licenseResolverMock.Object;
+
+			// Act
+			licenseResolver.TryAddNewAssembly(assembly);
+
+			// Assert
+			licenseResolverMock.Verify(resolver => resolver.HandleAssemblyLicense(It.IsAny<AssemblyName>()), Times.Never);
 		}
 	}
 }

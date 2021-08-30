@@ -18,6 +18,7 @@ namespace LicenseProvider.ResourceAssembly.LittlePhoenix.Test
 				.AddCurrentAssembly()
 				.AddAssemblyFromReference<Anchor>()
 				.WithDefaultOutputDirectory()
+				.DoNotExcludeAssemblies()
 				.DoNotLogMissingLicensesToFile()
 				.Build()
 				;

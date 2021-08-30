@@ -11,6 +11,7 @@ using System.Xml;
 
 namespace Phoenix.Functionality.LicenseProvider
 {
+
 	/// <summary>
 	/// Configuration of a single embedded xml license resource.
 	/// </summary>

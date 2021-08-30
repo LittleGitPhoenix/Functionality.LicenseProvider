@@ -25,7 +25,7 @@ ___
 
 The ***Phoenix.Functionality.LicenseProvider*** provides licenses "on the fly" while the application is running. This is done by monitoring and matching the list of all currently loaded assemblies against a configurable collection of `LicenseConfiguration`s. If an assembly matches one of those configurations, the appropriate license file will be written to the applications working or to a configurable other directory.
 
-The idea is, that, instead of manually adding and updating licenses for all of the many projects software typical consists of, just a single [**Resource Assembly**](#Resource-Assemblies) containing those license files should be created and later on maintained.
+The idea is, that, instead of manually adding and updating licenses for all of the many projects software typical consists of, just a single [**Resource Assembly**](#Resource-Assemblies) containing those license files should be created and maintained.
 
 ___
 
@@ -33,7 +33,7 @@ ___
 
 ## Set-Up
 
-First step would be to add the ***Phoenix.Functionality.LicenseProvider*** **NuGet** package to your main project and then creating a new instance of the `LicenseResolver` class. This class just needs to know which [**Resource Assemblies**](#Resource-Assemblies) to analyze for license information and optionally where to safe the licenses files to. Both things are supplied via the [`LicenseResolverConfiguration`](#LicenseResolverConfiguration) class.
+First step would be to add the ***Phoenix.Functionality.LicenseProvider*** **NuGet** package to your main project and then creating a new instance of the `LicenseResolver` class. This class just needs to know which [resource assemblies](#Resource-Assemblies) to analyze for [license information](#License-Information) and optionally where to safe the license files to. Both things are supplied via the [`LicenseResolverConfiguration`](#LicenseResolverConfiguration) class.
 
 ``` csharp
 // Below defined path is also the default path and could be omitted.
@@ -46,7 +46,7 @@ var configuration = new LicenseResolverConfiguration(licenseDirectory, resourceA
 };
 var licenseResolver = new LicenseResolver(configuration);
 ```
-Finally just call **_Start_** on the newly created instance and licenses will be provided for all loaded assemblies.
+Finally just call `Start` on the newly created instance and licenses will be provided for all loaded assemblies.
 
 ``` csharp
 licenseResolver.Start();
@@ -66,6 +66,7 @@ var licenseResolver = LicenseResolver
 	.AddCurrentAssembly()
 	.AddAssemblyFromReference<SomeTypeFromTheAssembly>()
 	.WithDefaultOutputDirectory()
+	.DoNotExcludeAssemblies()
 	.DoNotLogMissingLicensesToFile()
 	.Build()
 	.Start()
@@ -76,23 +77,31 @@ In general the `LicenseResolver` should be created and started early on in your 
 
 ## LicenseResolverConfiguration
 
-The `LicenseResolverConfiguration` contains configuration information to be used by a `LicenseResolver`. Those options are:
+The `LicenseResolverConfiguration` contains configuration information to be used by a `LicenseResolver`. This are the options:
 
-- LicenseDirectory
+- `LicenseDirectory`
 
 	The directory where the licenses will be saved to. Default is *.licenses* in the executing applications directory.
 
-- ResourceAssemblies
+- `ResourceAssemblies`
 
 	A collection of [assemblies](#Resource-Assemblies) that will be searched for embedded xml license files.
 
-- LogMissingLicensesToFile
+- `ExcludedAssemblies`
+
+  A collection of `ExcludedLicenseConfiguration` containing information about assemblies that will be ignored by the `LicenseResolver`.
+
+  :heavy_exclamation_mark: All excluded assemblies will be completely overstepped when resolving licenses.
+
+  :heavy_exclamation_mark: By default all dynamic assemblies and assemblies containing **microsoft.net** will be ignored.
+
+- `LogMissingLicensesToFile`
 
 	Should the name of assemblies for which no license could be resolved be written to the file *.missing.txt* in the same directory where license are saved.
 
 ## Resource Assemblies
 
-A **Resource Assembly** in the world of the license provider is just a rather normal assembly that contains [license information](#License-Information) as embedded resource. The easiest way to provide such an assembly to the `LicenseResolver` is by adding a single accessible Type into the resource assembly.
+A **Resource Assembly** in the world of the license provider is just a rather normal assembly that contains [license information](#License-Information) as embedded resource. The easiest way to provide such an assembly to the `LicenseResolver` is by adding a single accessible type into the resource assembly.
 
 ```csharp
 /// <summary>
@@ -109,16 +118,17 @@ var licenseResolver = LicenseResolver
 	.AddCurrentAssembly()
 	.AddAssemblyFromReference<Anchor>() // Here is the 'Anchor'.
 	.WithDefaultOutputDirectory()
+	.DoNotExcludeAssemblies()
 	.DoNotLogMissingLicensesToFile()
 	.Build()
 	;
 ```
 
-:heavy_exclamation_mark: Resource assemblies shouldn't reference the ***Phoenix.Functionality.LicenseProvider***.
+:heavy_exclamation_mark: Resource assemblies shouldn't reference the `Phoenix.Functionality.LicenseProvider`.
 
 ## License Information
 
-The license information consists of **XML** files that must reside in a separate folder named _Licenses_ that will be scanned by the ***Phoenix.Functionality.LicenseProvider***. Additionally those **XML** files must have the following structure.
+License information are simple **XML** files that must have the following structure.
 
 ``` xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
@@ -163,7 +173,7 @@ This is the identifier of the assembly for which license information should be p
 
 - **matchMode**
 
-This defines how the name of a loaded assembly is matched against the above **assemblyIdentifier**. Its values must equal those of the **_AssemblyNameMatchMode_** enumeration. Possible values are:
+This defines how the name of a loaded assembly is matched against the above **assemblyIdentifier**. Its values must equal those of the `AssemblyNameMatchMode` enumeration. Possible values are:
 
 |Value|Description|
 |-|-|

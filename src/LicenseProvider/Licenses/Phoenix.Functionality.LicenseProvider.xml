@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <information
 	assemblyName="Phoenix.Functionality.LicenseProvider"
-	matchMode="Exact"
+	matchMode="StartsWith"
 >
 	<license version="0.0.0" fileName="Phoenix.Functionality.LicenseProvider.txt">
 Copyright © 2020 Felix Leistner

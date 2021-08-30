@@ -21,6 +21,8 @@ namespace Phoenix.Functionality.LicenseProvider
 
 		#region Fields
 
+		internal static LicenseProvider NoLicenseProvider = new LicenseProvider(new Version(), String.Empty, typeof(System.Object).Assembly, String.Empty, 0);
+
 		private readonly Assembly _containingAssembly;
 
 		private readonly string _resourceName;

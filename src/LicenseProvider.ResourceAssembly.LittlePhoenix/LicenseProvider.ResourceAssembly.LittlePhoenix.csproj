@@ -6,8 +6,8 @@
 		<RootNamespace>Phoenix.Functionality.LicenseProvider.ResourceAssembly.LittlePhoenix</RootNamespace>
 		<Authors>Felix Leistner</Authors>
 		<Company>Little Phoenix</Company>
-		<Version>1.0.0</Version>
-		<Copyright>2020</Copyright>
+		<Version>1.1.0</Version>
+		<Copyright>2021</Copyright>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<Description>Contains embedded license xml resources for Little Phoenix assemblies.</Description>
 		<PackageIcon>nuget.png</PackageIcon>
@@ -25,6 +25,7 @@
 
 	<ItemGroup>
 		<EmbeddedResource Include="Licenses\Phoenix.Data.Plc.xml" />
+		<EmbeddedResource Include="Licenses\Phoenix.Functionality.Logging.Extensions.xml" />
 		<EmbeddedResource Include="Licenses\Phoenix.UI.Wpf.Architecture.VMFirst.DialogProvider.xml" />
 		<EmbeddedResource Include="Licenses\Phoenix.UI.Wpf.Architecture.VMFirst.ViewProvider.xml" />
 		<EmbeddedResource Include="Licenses\Phoenix.UI.Wpf.Architecture.VMFirst.xml" />

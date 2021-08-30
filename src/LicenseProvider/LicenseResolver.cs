@@ -16,19 +16,25 @@ namespace Phoenix.Functionality.LicenseProvider
 	/// <summary>
 	/// Resolver of license information for loaded <see cref="Assembly"/>s.
 	/// </summary>
+#if DEBUG
+	public class LicenseResolver
+#else
 	public sealed class LicenseResolver
+#endif
 	{
 		#region Delegates / Events
+
 		#endregion
 
 		#region Constants
+
 		#endregion
 
 		#region Fields
-		
+
 		/// <summary> The <see cref="LicenseResolverConfiguration"/> of this instance. </summary>
 		private readonly LicenseResolverConfiguration _configuration;
-		
+
 		/// <summary> Collection of all already loaded assemblies. </summary>
 		private readonly HashSet<AssemblyName> _loadedAssemblies;
 
@@ -43,10 +49,12 @@ namespace Phoenix.Functionality.LicenseProvider
 
 		#region (De)Constructors
 
+#if !DEBUG
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		public LicenseResolver() : this(new LicenseResolverConfiguration()) { }
+#endif
 
 		/// <summary>
 		/// Constructor
@@ -60,8 +68,11 @@ namespace Phoenix.Functionality.LicenseProvider
 			// Initialize fields.
 			_loadedAssemblies = new HashSet<AssemblyName>();
 
+			//
+			this.TryCreateMissingLicensesFile();
+
 			// Always add this assembly as source for licenses.
-			var resourceAssemblies = configuration.ResourceAssemblies.Concat(new[] {Assembly.GetExecutingAssembly()}).ToArray();
+			var resourceAssemblies = configuration.ResourceAssemblies.Concat(new[] { Assembly.GetExecutingAssembly() }).ToArray();
 			this.LicenseConfigurations = LicenseLoader.LoadLicenseConfigurationsFromAssemblies(resourceAssemblies);
 		}
 
@@ -113,7 +124,11 @@ namespace Phoenix.Functionality.LicenseProvider
 			this.TryAddNewAssembly(loadedAssembly);
 		}
 
+#if DEBUG
+		internal void TryAddNewAssembly(Assembly newAssembly)
+#else
 		private void TryAddNewAssembly(Assembly newAssembly)
+#endif
 		{
 			var assemblyInformation = newAssembly.GetName();
 
@@ -121,28 +136,31 @@ namespace Phoenix.Functionality.LicenseProvider
 			{
 				_loadedAssemblies.Add(assemblyInformation);
 
+				// Overstep excluded assemblies.
+				var isExcluded = newAssembly.IsDynamic || LicenseResolver.TryGetLicenseProvider(assemblyInformation, _configuration.ExcludedAssemblies, out _);
+				if (isExcluded)
+				{
+					return;
+				}
+
 				var success = this.HandleAssemblyLicense(assemblyInformation);
 				if (!success)
 				{
-					// Log missing license only for certain assemblies.
-					if
-					(
-						!newAssembly.IsDynamic // No dynamic assemblies.
-						&& !newAssembly.Location.ToLower().Contains("microsoft.net") // No .Net assemblies.
-					)
+					System.Diagnostics.Trace.WriteLine($"LICENSE PROVIDER: Could not find license for '{assemblyInformation.Name}' in Version {assemblyInformation.Version}.");
+					if (_configuration.LogMissingLicensesToFile)
 					{
-						System.Diagnostics.Trace.WriteLine($"LICENSE PROVIDER: Could not find license for '{assemblyInformation.Name}' in Version {assemblyInformation.Version}.");
-						if (_configuration.LogMissingLicensesToFile)
-						{
-							var licenseDirectory = _configuration.GetAndCreateLicenseDirectory();
-							File.AppendAllText(Path.Combine(licenseDirectory.FullName, ".missing.txt"), newAssembly.FullName + "\n");
-						}
+						var licenseDirectory = _configuration.GetAndCreateLicenseDirectory();
+						File.AppendAllText(Path.Combine(licenseDirectory.FullName, ".missing.txt"), newAssembly.FullName + "\n");
 					}
 				}
 			}
 		}
 
+#if DEBUG
+		public virtual bool HandleAssemblyLicense(AssemblyName assemblyInformation)
+#else
 		private bool HandleAssemblyLicense(AssemblyName assemblyInformation)
+#endif
 		{
 			// Find a matching license provider.
 			if (!this.TryGetLicenseProvider(assemblyInformation, out var licenseProvider)) return false;
@@ -165,7 +183,14 @@ namespace Phoenix.Functionality.LicenseProvider
 #else
 		internal bool TryGetLicenseProvider(AssemblyName assemblyInformation, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out LicenseProvider? licenseProvider)
 #endif
-			=> LicenseResolver.TryGetLicenseProvider(assemblyInformation.Name, assemblyInformation.Version, this.LicenseConfigurations, out licenseProvider);
+			=> LicenseResolver.TryGetLicenseProvider(assemblyInformation, this.LicenseConfigurations, out licenseProvider);
+
+#if NETFRAMEWORK || NETSTANDARD || NETCOREAPP1_0 || NETCOREAPP1_1 || NETCOREAPP2_0 || NETCOREAPP2_1 || NETCOREAPP2_2 || NETCOREAPP3_0 || NETCOREAPP3_1
+		internal static bool TryGetLicenseProvider(AssemblyName assemblyInformation, IReadOnlyCollection<LicenseConfiguration> licenseConfigurations, out LicenseProvider? licenseProvider)
+#else
+		internal static bool TryGetLicenseProvider(AssemblyName assemblyInformation, IReadOnlyCollection<LicenseConfiguration> licenseConfigurations, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out LicenseProvider? licenseProvider)
+#endif
+			=> LicenseResolver.TryGetLicenseProvider(assemblyInformation.Name, assemblyInformation.Version, licenseConfigurations, out licenseProvider);
 
 		/// <summary>
 		/// Tries to get the matching <see cref="LicenseProvider"/> from <paramref name="licenseConfigurations"/> for an assembly.
@@ -186,7 +211,7 @@ namespace Phoenix.Functionality.LicenseProvider
 				licenseProvider = null;
 				return false;
 			}
-			
+
 			licenseProvider = licenseConfigurations
 				.FirstOrDefault
 				(
@@ -195,11 +220,15 @@ namespace Phoenix.Functionality.LicenseProvider
 						switch (configuration.NameMatchMode)
 						{
 							case AssemblyNameMatchMode.Contains:
-								return assemblyName!.Contains(configuration.AssemblyIdentifier);
+#if NETFRAMEWORK || NETSTANDARD || NETCOREAPP1_0 || NETCOREAPP1_1 || NETCOREAPP2_0 || NETCOREAPP2_1 || NETCOREAPP2_2 || NETCOREAPP3_0 || NETCOREAPP3_1
+								return assemblyName!.IndexOf(configuration.AssemblyIdentifier, StringComparison.OrdinalIgnoreCase) >= 0;
+#else
+								return assemblyName!.Contains(configuration.AssemblyIdentifier, StringComparison.OrdinalIgnoreCase);
+#endif
 							case AssemblyNameMatchMode.StartsWith:
-								return assemblyName!.StartsWith(configuration.AssemblyIdentifier);
+								return assemblyName!.StartsWith(configuration.AssemblyIdentifier, StringComparison.OrdinalIgnoreCase);
 							case AssemblyNameMatchMode.EndsWith:
-								return assemblyName!.EndsWith(configuration.AssemblyIdentifier);
+								return assemblyName!.EndsWith(configuration.AssemblyIdentifier, StringComparison.OrdinalIgnoreCase);
 							case AssemblyNameMatchMode.RegEx:
 								return new Regex(configuration.AssemblyIdentifier, RegexOptions.IgnoreCase).IsMatch(assemblyName!);
 							case AssemblyNameMatchMode.Exact:
@@ -215,7 +244,16 @@ namespace Phoenix.Functionality.LicenseProvider
 
 			return licenseProvider != null;
 		}
-		
-#endregion
+
+		private void TryCreateMissingLicensesFile()
+		{
+			var licenseDirectory = _configuration.GetAndCreateLicenseDirectory();
+			var missingLicensesFile = new FileInfo(Path.Combine(licenseDirectory.FullName, ".missing.txt"));
+			if (missingLicensesFile.Exists) missingLicensesFile.Delete();
+			missingLicensesFile.Create().Dispose();
+			missingLicensesFile.Refresh();
+		}
+
+		#endregion
 	}
 }
