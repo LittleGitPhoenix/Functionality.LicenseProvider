@@ -163,7 +163,7 @@ namespace Phoenix.Functionality.LicenseProvider
 		{
 			return new LicenseResolver
 			(
-				new LicenseResolverConfiguration(_licenseDirectory, _resourceAssemblies.ToArray())
+				new LicenseResolverConfiguration(_licenseDirectory, _excludedLicenseConfigurations.ToArray(), _resourceAssemblies.ToArray())
 				{
 					LogMissingLicensesToFile = _logMissing
 				}

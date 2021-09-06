@@ -77,6 +77,7 @@ namespace Phoenix.Functionality.LicenseProvider
 			// Build the excluded assemblies.
 			this.ExcludedAssemblies = new[]
 				{
+					new ExcludedLicenseConfiguration("system", AssemblyNameMatchMode.StartsWith),
 					new ExcludedLicenseConfiguration("microsoft.net", AssemblyNameMatchMode.Contains),
 				}
 				.Concat(excludedAssemblies)

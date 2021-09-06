@@ -93,7 +93,12 @@ The `LicenseResolverConfiguration` contains configuration information to be used
 
   :heavy_exclamation_mark: All excluded assemblies will be completely overstepped when resolving licenses.
 
-  :heavy_exclamation_mark: By default all dynamic assemblies and assemblies containing **microsoft.net** will be ignored.
+  :heavy_exclamation_mark: By default all dynamic assemblies and some common assemblies listed below are ignored.
+
+    | Identifier | Match mode |
+    | :- | :- |
+    | system | `AssemblyNameMatchMode.StartsWith` |
+    | microsoft.net | `AssemblyNameMatchMode.Contains` |
 
 - `LogMissingLicensesToFile`
 
