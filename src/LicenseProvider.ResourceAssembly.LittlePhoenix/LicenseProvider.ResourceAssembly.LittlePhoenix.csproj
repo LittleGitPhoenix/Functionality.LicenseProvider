@@ -6,7 +6,7 @@
 		<RootNamespace>Phoenix.Functionality.LicenseProvider.ResourceAssembly.LittlePhoenix</RootNamespace>
 		<Authors>Felix Leistner</Authors>
 		<Company>Little Phoenix</Company>
-		<Version>1.1.0</Version>
+		<Version>1.2.0</Version>
 		<Copyright>2021</Copyright>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<Description>Contains embedded license xml resources for Little Phoenix assemblies.</Description>
@@ -18,6 +18,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="Licenses\Phoenix.Functionality.Settings.xml" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Include="..\..\nuget.png" Pack="true" PackagePath="" Link="⬙\nuget.png" />
 		<None Include="..\..\README.md" Pack="true" PackagePath="" Link="⬙\README.md" />
 		<None Include="..\..\LICENSE.md" Pack="true" PackagePath="" Link="⬙\LICENSE.md" />
@@ -26,6 +30,7 @@
 	<ItemGroup>
 		<EmbeddedResource Include="Licenses\Phoenix.Data.Plc.xml" />
 		<EmbeddedResource Include="Licenses\Phoenix.Functionality.Logging.Extensions.xml" />
+		<EmbeddedResource Include="Licenses\Phoenix.Functionality.Settings.xml" />
 		<EmbeddedResource Include="Licenses\Phoenix.UI.Wpf.Architecture.VMFirst.DialogProvider.xml" />
 		<EmbeddedResource Include="Licenses\Phoenix.UI.Wpf.Architecture.VMFirst.ViewProvider.xml" />
 		<EmbeddedResource Include="Licenses\Phoenix.UI.Wpf.Architecture.VMFirst.xml" />
