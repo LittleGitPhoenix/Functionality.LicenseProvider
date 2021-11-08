@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -32,6 +33,12 @@ namespace Phoenix.Functionality.LicenseProvider
 
 		#region Fields
 
+		/// <summary> Collection of beginnings that will be removed from each assembly name before getting license information. </summary>
+		private static readonly IReadOnlyCollection<string> SuperfluousBeginnings;
+		
+		/// <summary> Collection of endings that will be removed from each assembly name before getting license information. </summary>
+		private static readonly IReadOnlyCollection<string> SuperfluousEndings;
+
 		/// <summary> The <see cref="LicenseResolverConfiguration"/> of this instance. </summary>
 		private readonly LicenseResolverConfiguration _configuration;
 
@@ -48,6 +55,12 @@ namespace Phoenix.Functionality.LicenseProvider
 		#endregion
 
 		#region (De)Constructors
+
+		static LicenseResolver()
+		{
+			SuperfluousBeginnings = new string[] { };
+			SuperfluousEndings = new[] { ".resources" };
+		}
 
 #if !DEBUG
 		/// <summary>
@@ -206,12 +219,14 @@ namespace Phoenix.Functionality.LicenseProvider
 		internal static bool TryGetLicenseProvider(string? assemblyName, Version? assemblyVersion, IReadOnlyCollection<LicenseConfiguration> licenseConfigurations, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out LicenseProvider? licenseProvider)
 #endif
 		{
+			assemblyName = LicenseResolver.CleanAssemblyName(assemblyName);
+
 			if (String.IsNullOrWhiteSpace(assemblyName) || assemblyVersion is null)
 			{
 				licenseProvider = null;
 				return false;
 			}
-
+			
 			licenseProvider = licenseConfigurations
 				.FirstOrDefault
 				(
@@ -252,6 +267,25 @@ namespace Phoenix.Functionality.LicenseProvider
 			if (missingLicensesFile.Exists) missingLicensesFile.Delete();
 			missingLicensesFile.Create().Dispose();
 			missingLicensesFile.Refresh();
+		}
+
+		internal static string? CleanAssemblyName(string? assemblyName)
+		{
+			if (assemblyName is null) return assemblyName;
+			if (String.IsNullOrWhiteSpace(assemblyName)) return assemblyName;
+
+			foreach (var superfluousBeginning in LicenseResolver.SuperfluousBeginnings)
+			{
+				var startsWidth = assemblyName.StartsWith(superfluousBeginning, StringComparison.OrdinalIgnoreCase);
+				if (startsWidth) assemblyName = assemblyName.Remove(0, superfluousBeginning.Length);
+			}
+
+			foreach (var superfluousEnding in LicenseResolver.SuperfluousEndings)
+			{
+				var index = assemblyName.LastIndexOf(superfluousEnding, StringComparison.OrdinalIgnoreCase);
+				if (index != -1) assemblyName = assemblyName.Remove(index);
+			}
+			return assemblyName;
 		}
 
 		#endregion

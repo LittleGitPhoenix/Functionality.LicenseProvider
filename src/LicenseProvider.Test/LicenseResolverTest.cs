@@ -60,6 +60,7 @@ namespace LicenseProvider.Test
 		[TestCase("My.UPPERCASE.Assembly", @"uppercase", AssemblyNameMatchMode.Contains, true)]
 		[TestCase("UPPERCASE.Assembly", @"uppercase", AssemblyNameMatchMode.StartsWith, true)]
 		[TestCase("My.UPPERCASE", @"uppercase", AssemblyNameMatchMode.EndsWith, true)]
+		[TestCase("Assembly.resources", @"Assembly", AssemblyNameMatchMode.Exact, true)]
 		public void GetLicenseProvider_Succeeds(string assemblyName, string assemblyIdentifier, AssemblyNameMatchMode matchMode, bool result)
 		{
 			// Arrange
@@ -173,6 +174,22 @@ namespace LicenseProvider.Test
 
 			// Assert
 			licenseResolverMock.Verify(resolver => resolver.HandleAssemblyLicense(It.IsAny<AssemblyName>()), Times.Never);
+		}
+
+		[Test]
+		[TestCase(null, null)]
+		[TestCase("", "")]
+		[TestCase("Assembly.resources", "Assembly")]
+		[TestCase("Assembly.Untouched", "Assembly.Untouched")]
+		public void Check_Cleaning_Assembly_Name_Succeeds(string assemblyName, string target)
+		{
+			// Arrange
+
+			// Act
+			var actual = LicenseResolver.CleanAssemblyName(assemblyName);
+
+			// Assert
+			Assert.AreEqual(target, actual);
 		}
 	}
 }
