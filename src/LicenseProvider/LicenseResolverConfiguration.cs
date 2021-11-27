@@ -71,7 +71,13 @@ namespace Phoenix.Functionality.LicenseProvider
 		/// <param name="excludedAssemblies"> <see cref="ExcludedAssemblies"/> </param>
 		public LicenseResolverConfiguration(DirectoryInfo? licenseDirectory, IReadOnlyCollection<ExcludedLicenseConfiguration> excludedAssemblies, params Assembly[] resourceAssemblies)
 		{
-			this.LicenseDirectory = licenseDirectory ?? new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), ".licenses"));
+#if NET5_0_OR_GREATER
+			var applicationPath = AppDomain.CurrentDomain.BaseDirectory;
+			this.LicenseDirectory = licenseDirectory ?? new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".licenses"));
+#else
+			//! This is especially needed for .NET Core 3.1 single file published apps, as they run from a temp directory.
+			this.LicenseDirectory = licenseDirectory ?? new DirectoryInfo(Path.Combine(Path.GetDirectoryName(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName) ?? Directory.GetCurrentDirectory(), ".licenses"));
+#endif
 			this.ResourceAssemblies = resourceAssemblies.Distinct().ToArray();
 
 			// Build the excluded assemblies.

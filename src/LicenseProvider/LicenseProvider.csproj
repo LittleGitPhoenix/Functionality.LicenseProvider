@@ -7,7 +7,7 @@
 		<WarningsAsErrors>nullable</WarningsAsErrors>
 		<AssemblyName>Phoenix.Functionality.LicenseProvider</AssemblyName>
 		<RootNamespace>Phoenix.Functionality.LicenseProvider</RootNamespace>
-		<Version>1.4.0</Version>
+		<Version>1.5.0</Version>
 		<Authors>Felix Leistner</Authors>
 		<Company>Little Phoenix</Company>
 		<Copyright>2021</Copyright>

@@ -37,7 +37,7 @@ First step would be to add the ***Phoenix.Functionality.LicenseProvider*** **NuG
 
 ``` csharp
 // Below defined path is also the default path and could be omitted.
-var licensesDirectory = new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), ".licenses"));
+var licensesDirectory = new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".licenses"));
 var resourceAssembly = typeof(SomeTypeFromTheAssembly).Assembly;
 
 var configuration = new LicenseResolverConfiguration(licenseDirectory, resourceAssembly)
