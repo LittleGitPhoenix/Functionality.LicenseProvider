@@ -2,7 +2,7 @@
 
 | .NET Framework | .NET Standard | .NET |
 | :-: | :-: | :-: |
-| :heavy_check_mark: 4.5.0 | :heavy_check_mark: 2.0 | :heavy_check_mark: 5.0 |
+| :heavy_minus_sign: | :heavy_check_mark: 2.0 | :heavy_check_mark: 5.0 :heavy_check_mark: 6.0 |
 
 This project aims at providing license information for assemblies referenced by applications, services or even other assemblies.
 ___
@@ -206,4 +206,4 @@ ___
 
 # Authors
 
-* **Felix Leistner**: _v1.x_
+* **Felix Leistner**: _v1.x_ - _v2.x_

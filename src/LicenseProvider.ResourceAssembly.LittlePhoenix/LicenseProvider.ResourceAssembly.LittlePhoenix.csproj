@@ -1,13 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net5.0;netstandard2.0;net45</TargetFrameworks>
+		<TargetFrameworks>net6.0;net5.0;netstandard2.0</TargetFrameworks>
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
 		<AssemblyName>Phoenix.Functionality.LicenseProvider.ResourceAssembly.LittlePhoenix</AssemblyName>
 		<RootNamespace>Phoenix.Functionality.LicenseProvider.ResourceAssembly.LittlePhoenix</RootNamespace>
 		<Authors>Felix Leistner</Authors>
 		<Company>Little Phoenix</Company>
-		<Version>1.2.0</Version>
-		<Copyright>2021</Copyright>
+		<Version>2.0.0</Version>
+		<Copyright>2022</Copyright>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<Description>Contains embedded license xml resources for Little Phoenix assemblies.</Description>
 		<PackageIcon>nuget.png</PackageIcon>
