@@ -5,7 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ___
 
-## 2.0.0 (2022-05-07)
+## 3.0.0
+
+:calendar: _2023-03-02_
+
+|        .NET        |     .NET Standard      |   .NET Framework   |
+| :----------------: | :--------------------: | :----------------: |
+| :heavy_minus_sign: | :heavy_check_mark: 2.0 | :heavy_minus_sign: |
+
+### Changed
+
+- The license for **MahApps.Metro.IconPacks** is now also applied to all sub-packages like **Material**, **Core**, **Coolicons**, etc.
+
+### Removed
+
+- Dropped direct support for specific framework implementations.
+___
+
+## 2.0.0
+
+:calendar: _2022-05-07_
 
 ### Added
 
@@ -17,7 +36,9 @@ ___
 - Support for **.Net Framework** was removed.
 ___
 
-## 1.3.0 (2021-11-02)
+## 1.3.0
+
+:calendar: _2021-11-02_
 
 ### Updated
 
@@ -25,7 +46,9 @@ ___
 - **MahApps.Metro.IconPacks**
 ___
 
-## 1.2.0 (2021-08-30)
+## 1.2.0
+
+:calendar: _2021-08-30_
 
 ### Added
 
@@ -36,7 +59,9 @@ ___
 - **Serilog**
 ___
 
-## 1.1.0 (2020-11-28)
+## 1.1.0
+
+:calendar: _2020-11-28_
 
 ### Added
 
@@ -50,6 +75,8 @@ ___
 - **EntityFramework** v6.3 → Apache-2.0
 ___
 
-## 1.0.0 (2020-01-03)
+## 1.0.0
+
+:calendar: _2020-01-03_
 
 - Initial release

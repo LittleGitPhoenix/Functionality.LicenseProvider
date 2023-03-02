@@ -5,7 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ___
 
-## 2.0.0 (2022-05-07)
+## 3.0.0
+
+:calendar: _2023-03-02_
+
+|        .NET        |     .NET Standard      |   .NET Framework   |
+| :----------------: | :--------------------: | :----------------: |
+| :heavy_minus_sign: | :heavy_check_mark: 2.0 | :heavy_minus_sign: |
+
+### Removed
+
+- Dropped direct support for specific framework implementations.
+___
+
+## 2.0.0
+
+:calendar: _2022-05-07_
 
 ### Added
 
@@ -24,21 +39,27 @@ ___
 - Support for **.Net Framework** was removed.
 ___
 
-## 1.5.0 (2021-11-27)
+## 1.5.0
+
+:calendar: _2021-11-27_
 
 ### Changed
 
 - The default directory where license files will be saved to, is now the applications base directory. Previously this was the working directory. Normally those two are the same, expect if the working directory has been changed manually.
 ___
 
-## 1.4.0 (2021-11-01)
+## 1.4.0
+
+:calendar: _2021-11-01_
 
 ### Added
 
 - Resource assemblies (e.g. _Assembly.resources.dll_) are now matched, even if the `LicenseConfiguration` is configured with `AssemblyNameMatchMode.Exact`.
 ___
 
-## 1.3.0 (2021-09-06)
+## 1.3.0
+
+:calendar: _2021-09-06_
 
 ### Added
 
@@ -49,7 +70,9 @@ ___
 - When using the builder pattern to create a `LicenseResolver` the method `ExcludeAssembly` was ultimately without function so that assemblies couldn't be excluded this way.
 ___
 
-## 1.2.0 (2021-08-30)
+## 1.2.0
+
+:calendar: _2021-08-30_
 
 ### Added
 
@@ -61,7 +84,9 @@ ___
 - The **.missing.txt** file is no longer appended but overridden each time.
 ___
 
-## 1.1.0 (2020-12-23)
+## 1.1.0
+
+:calendar: _2020-12-23_
 
 ### Added
 
@@ -76,13 +101,17 @@ ___
 - Both methods `LicenseResolver.Start` and `LicenseResolver.Stop` now return the instance upon which they were called. This way those methods can be used in fluent creation.
 ___
 
-## 1.0.1 (2020-01-11)
+## 1.0.1
+
+:calendar: _2020-01-11_
 
 ### Fixed
 
 - Matching assembly version failed because the comparison was in the wrong order.
 ___
 
-## 1.0.0 (2020-01-03)
+## 1.0.0
+
+:calendar: _2020-01-03_
 
 - Initial release
