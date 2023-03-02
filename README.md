@@ -1,8 +1,8 @@
 # Phoenix.Functionality.LicenseProvider
 
-| .NET Framework | .NET Standard | .NET |
-| :-: | :-: | :-: |
-| :heavy_minus_sign: | :heavy_check_mark: 2.0 | :heavy_check_mark: 5.0 :heavy_check_mark: 6.0 |
+|        .NET        |     .NET Standard      |   .NET Framework   |
+| :----------------: | :--------------------: | :----------------: |
+| :heavy_minus_sign: | :heavy_check_mark: 2.0 | :heavy_minus_sign: |
 
 This project aims at providing license information for assemblies referenced by applications, services or even other assemblies.
 ___
@@ -91,9 +91,25 @@ The `LicenseResolverConfiguration` contains configuration information to be used
 
   A collection of `ExcludedLicenseConfiguration` containing information about assemblies that will be ignored by the `LicenseResolver`.
 
-  :heavy_exclamation_mark: All excluded assemblies will be completely overstepped when resolving licenses.
+  <div style='padding:0.1em; border-style: solid; border-width: 0px; border-left-width: 10px; border-color: #37ff00; background-color: #37ff0020' >
+  	<span style='margin-left:1em; text-align:left'>
+      	<b>Information</b>
+      </span>
+      <br>
+  	<div style='margin-left:1em; margin-right:1em;'>
+  		All excluded assemblies will be completely overstepped when resolving licenses.
+      </div>
+  </div>
 
-  :heavy_exclamation_mark: By default all dynamic assemblies and some common assemblies listed below are ignored.
+  <div style='padding:0.1em; border-style: solid; border-width: 0px; border-left-width: 10px; border-color: #ffd200; background-color: #ffd20020' >
+  	<span style='margin-left:1em; text-align:left'>
+      	<b>Hint</b>
+      </span>
+      <br>
+  	<div style='margin-left:1em; margin-right:1em;'>
+          By default all dynamic assemblies and some common assemblies listed below are ignored.
+      </div>
+  </div>
 
     | Identifier | Match mode |
     | :- | :- |
@@ -129,7 +145,15 @@ var licenseResolver = LicenseResolver
 	;
 ```
 
-:heavy_exclamation_mark: Resource assemblies shouldn't reference the `Phoenix.Functionality.LicenseProvider`.
+<div style='padding:0.1em; border-style: solid; border-width: 0px; border-left-width: 10px; border-color: #ffd200; background-color: #ffd20020' >
+	<span style='margin-left:1em; text-align:left'>
+    	<b>Advice</b>
+    </span>
+    <br>
+	<div style='margin-left:1em; margin-right:1em;'>
+        Resource assemblies shouldn't reference the <i>Phoenix.Functionality.LicenseProvider</i>.
+    </div>
+</div>
 
 ## License Information
 
@@ -206,4 +230,4 @@ ___
 
 # Authors
 
-* **Felix Leistner**: _v1.x_ - _v2.x_
+* **Felix Leistner**: _v1.x_ - _v3.x_
