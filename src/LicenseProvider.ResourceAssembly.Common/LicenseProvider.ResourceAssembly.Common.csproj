@@ -14,7 +14,7 @@
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<Description>Contains embedded license xml resources for assemblies used in common development.</Description>
 		<PackageIcon>nuget.png</PackageIcon>
-		<PackageReadmeFile>readme.md</PackageReadmeFile>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
 		<PackageIconUrl>https://www.little-phoenix.de/nuget/nuget.ico</PackageIconUrl>
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
@@ -62,7 +62,7 @@
 
 	<!-- Move the created NuGet packages into another folder. -->
 	<Target Name="MovePackage" AfterTargets="Pack">
-		<Move SourceFiles="$(BaseOutputPath)$(Configuration)\$(PackageId).$(PackageVersion).nupkg" DestinationFiles="$(BaseOutputPath)$(Configuration)\..\..\..\..\.nuget\$(PackageId).$(PackageVersion).nupkg" />
+		<Move SourceFiles="$(BaseOutputPath)$(Configuration)\$(PackageId).$(PackageVersion).nupkg" DestinationFiles="$(MSBuildProjectDirectory)\..\..\.nuget\$(PackageId).$(PackageVersion).nupkg" />
 	</Target>
 
 </Project>
