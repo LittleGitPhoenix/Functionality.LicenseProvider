@@ -9,8 +9,8 @@
 		<RootNamespace>Phoenix.Functionality.LicenseProvider.ResourceAssembly.Common</RootNamespace>
 		<Authors>Felix Leistner</Authors>
 		<Company>Little Phoenix</Company>
-		<Copyright>2023</Copyright>
-		<Version>3.0.0</Version>
+		<Copyright>2024</Copyright>
+		<Version>3.1.0</Version>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<Description>Contains embedded license xml resources for assemblies used in common development.</Description>
 		<PackageIcon>nuget.png</PackageIcon>
@@ -47,6 +47,7 @@
 		<EmbeddedResource Include="Licenses\MigraDoc.xml" />
 		<EmbeddedResource Include="Licenses\MoreLinq.xml" />
 		<EmbeddedResource Include="Licenses\MouseKeyHook.xml" />
+		<EmbeddedResource Include="Licenses\NeoSmart.AsyncLock.xml" />
 		<EmbeddedResource Include="Licenses\Newtonsoft.Json.xml" />
 		<EmbeddedResource Include="Licenses\NLog.xml" />
 		<EmbeddedResource Include="Licenses\PDFSharp.xml" />

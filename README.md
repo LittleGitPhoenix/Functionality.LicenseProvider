@@ -79,46 +79,32 @@ In general the `LicenseResolver` should be created and started early on in your 
 
 The `LicenseResolverConfiguration` contains configuration information to be used by a `LicenseResolver`. This are the options:
 
-- `LicenseDirectory`
+### `LicenseDirectory`
 
-	The directory where the licenses will be saved to. Default is *.licenses* in the executing applications directory.
+The directory where the licenses will be saved to. Default is *.licenses* in the executing applications directory.
 
-- `ResourceAssemblies`
+### `ResourceAssemblies`
 
-	A collection of [assemblies](#Resource-Assemblies) that will be searched for embedded xml license files.
+A collection of [assemblies](#Resource-Assemblies) that will be searched for embedded xml license files.
 
-- `ExcludedAssemblies`
+### `ExcludedAssemblies`
 
   A collection of `ExcludedLicenseConfiguration` containing information about assemblies that will be ignored by the `LicenseResolver`.
 
-  <div style='padding:0.1em; border-style: solid; border-width: 0px; border-left-width: 10px; border-color: #37ff00; background-color: #37ff0020' >
-  	<span style='margin-left:1em; text-align:left'>
-      	<b>Information</b>
-      </span>
-      <br>
-  	<div style='margin-left:1em; margin-right:1em;'>
-  		All excluded assemblies will be completely overstepped when resolving licenses.
-      </div>
-  </div>
+> [!Tip]
+> All excluded assemblies will be completely overstepped when resolving licenses.
 
-  <div style='padding:0.1em; border-style: solid; border-width: 0px; border-left-width: 10px; border-color: #ffd200; background-color: #ffd20020' >
-  	<span style='margin-left:1em; text-align:left'>
-      	<b>Hint</b>
-      </span>
-      <br>
-  	<div style='margin-left:1em; margin-right:1em;'>
-          By default all dynamic assemblies and some common assemblies listed below are ignored.
-      </div>
-  </div>
+> [!Note]
+> By default all dynamic assemblies and some common assemblies listed below are ignored.
 
-    | Identifier | Match mode |
-    | :- | :- |
-    | system | `AssemblyNameMatchMode.StartsWith` |
-    | microsoft.net | `AssemblyNameMatchMode.Contains` |
+| Identifier | Match mode |
+| :- | :- |
+| system | `AssemblyNameMatchMode.StartsWith` |
+| microsoft.net | `AssemblyNameMatchMode.Contains` |
 
-- `LogMissingLicensesToFile`
+### `LogMissingLicensesToFile`
 
-	Should the name of assemblies for which no license could be resolved be written to the file *.missing.txt* in the same directory where license are saved.
+Should the name of assemblies for which no license could be resolved be written to the file _.missing.txt_ in the same directory where license are saved.
 
 ## Resource Assemblies
 
@@ -144,16 +130,8 @@ var licenseResolver = LicenseResolver
 	.Build()
 	;
 ```
-
-<div style='padding:0.1em; border-style: solid; border-width: 0px; border-left-width: 10px; border-color: #ffd200; background-color: #ffd20020' >
-	<span style='margin-left:1em; text-align:left'>
-    	<b>Advice</b>
-    </span>
-    <br>
-	<div style='margin-left:1em; margin-right:1em;'>
-        Resource assemblies shouldn't reference the <i>Phoenix.Functionality.LicenseProvider</i>.
-    </div>
-</div>
+> [!Important]
+> Resource assemblies shouldn't reference the `Phoenix.Functionality.LicenseProvider`.
 
 ## License Information
 
@@ -190,8 +168,10 @@ SOFTWARE.
   </license>
 </information>
 ```
+> [!Note]
 > The above example is a license configuration for **Autofac**.
 
+> [!Note]
 > Provide as many such files as are needed for all of the licensed software in play.
 
 This **XML** contains all information needed for matching loaded assemblies and providing the license files.

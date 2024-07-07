@@ -55,8 +55,7 @@ public class ResourceLoadTest
 			;
 
 		// Assert
-		Assert.That(licenseCount, Is.AtLeast(1));
-		Assert.AreEqual(targetCount, licenseCount);
+		Assert.That(licenseCount, Is.EqualTo(targetCount));
 	}
 
 	#endregion
